@@ -1,17 +1,19 @@
 # Bye Spam Bot
-Иногда в вашей беседе Telegram висят внешние удобные, интересные, или пользующиеся популярностью боты.
-Например, в моей конфе друзей есть бот, который позволяет заводить свинку, и, нажимая каждый день на команду /grow, она худеет или толстеет. 
-Весело, но есть одно но: часто такие боты пользуются своей возможностью писать в чат и прокидывают 5-6 реклам в день. Чтобы избавиться от реклам, воспользуемся этим Bye-spam ботом.
 
-## Правила
+Sometimes in your Telegram chat there are useful, interesting, or popular bots.  
+For example, in my friends’ chat there is a bot that lets you raise a pig; by pressing the `/grow` command every day, it loses or gains weight.  
+It’s fun, but there is one catch: these bots often use their ability to send messages to the chat and post 5–6 ads per day. To get rid of the ads, let’s use this Bye-spam bot.
 
-Скрипт работает следующим образом - скорее всего, вы знаете, либо 
+## Rules
 
-а) Какие слова бот ТОЧНО не должен употреблять (какие слова есть в рекламе, которую он отправляет, это, может быть, слово "Подписывайтесь" из "Подписывайтесь на телеграм канал разработчиков бота"), или 
+The script works as follows — most likely you already know one of two options:
 
-б) сообщения ТОЛЬКО С КАКИМИ словами бот может отправлять (например, он всегда пишет "Ваша свинка подросла на 10 килограмм". Если в сообщении есть слово "подросла", или, "килограмм", что обычно не встречается в рекламе, то это нужное нам сообщение").
+1) Which words the bot DEFINITELY must NOT use (for example, the word "Subscribe" from "Subscribe to the bot developer’s Telegram channel").
 
-Следовательно, у бота есть параметры настройки
+2) Which words the bot can send ONLY WITH (for example, it always writes "Your pig has grown by 10 kilograms." If the message contains "grown" or "kilograms", which do not usually appear in ads, then this is the message we want to keep).
+
+Accordingly, the bot has the following configuration parameters:
+
 ```python
 GRAY_LIST = [11111111111, 2222222222]
 
@@ -19,18 +21,19 @@ ALLOWED_WORDS = ["hello", "bye", "how", "are", "you"]
 
 FORBIDDEN_WORDS = ["ad", "spam", "18+"]
 
-CHECK_ALLOWED = True      # Toggle Allowed-Words mode
-CHECK_FORBIDDEN = False     # Toggle Forbidden-Words mode
+CHECK_ALLOWED    = True      # Toggle Allowed-Words mode
+CHECK_FORBIDDEN  = False     # Toggle Forbidden-Words mode
 ```
-- `GRAY_LIST` - user_id бота или пользователя, который у нас на карандаше (можно узнать с помощью @UserInfeBot или любого другого похожего бота)
-- `CHECK_ALLOWED` - если True, то он будет проверять, есть ли в сообщении бота слово из списка `ALLOWED_WORDS`, которое доказывает, что это сообщение хорошее ("подросла","килограмм" из примера сверху). Если слово/слова из этого списка есть в сообщении, Bye-spam его не удаляет, но другие сообщения без разрешенных слов через фильтр не пройдут.
-- `CHECK_FORBIDDEN` - если True, то он будет проверять, есть ли в сообщении бота слово из `FORBIDDEN_WORDS`, которое доказывает, что это сообщение - реклама ("Подписывайтесь" из примера сверху). Если такое слово/слова есть в сообщении, то оно удаляется, а все остальные сообщения без таких слов полностью разрешены.
 
-Перед началом использования этого бота-скрипта, требуется заполнить эти параметры под Вас. Используйте режим на выбор, можете использовать оба, чтобы наверняка. Перед тем, как запускать фильтр, подумайте, какой способ работы бота Вам подходит, и какие слова служат триггером рекламы/другой дичи, и добавьте их в список.
+- `GRAY_LIST` — the user_id of the bot or user we are monitoring (you can find it using @UserInfoBot or any similar bot).  
+- `CHECK_ALLOWED` — if True, the bot checks whether the message contains any word from `ALLOWED_WORDS`; without such words, the message is deleted.  
+- `CHECK_FORBIDDEN` — if True, the bot checks whether the message contains any word from `FORBIDDEN_WORDS`; if so, the message is deleted.
 
+Before using this bot script, fill in these parameters to suit your needs. Choose one mode or use both to be sure. Before running the filter, decide which approach best fits you and which words trigger ads or other unwanted content, then add them to the lists.
 
-## Пример
-### Режим A: CHECK_ALLOWED = True, CHECK_FORBIDDEN = False
+## Example
+
+### Mode A: `CHECK_ALLOWED = True`, `CHECK_FORBIDDEN = False`
 ```python
 GRAY_LIST = [11111111111, 2222222222]
 
@@ -38,19 +41,19 @@ ALLOWED_WORDS = ["hello", "bye", "how", "are", "you"]
 
 FORBIDDEN_WORDS = ["ad", "spam", "18+"]
 
-CHECK_ALLOWED = True  #!    
+CHECK_ALLOWED = True  #!
 CHECK_FORBIDDEN = False
 ```
-Примеры сообщений, которые будут фильтроваться от бота/пользователя из серого списка:
-1. "Всем привет!" - **удаляется**
-2. "Всем hello" - **не удаляется**
-3. "Всем hello bye" - **не удаляется**
-4. "Ad spam 18+ bye" - **не удаляется**
-5. "Очень длинный текст, повествующий о культурной ценности альбома brat Charli xcx" - **удаляется**
-6. "Очень длинный текст, повествующий о культурной ценности альбома brat Charli xcx hello" - **не удаляется**
-7. "Очень длинный текст, повествующий о культурной ценности альбома brat Charli xcx ad" - **удаляется**
-   
-### Режим Б: CHECK_ALLOWED = False, CHECK_FORBIDDEN = True
+Examples of messages that will be filtered for the bot/user in the gray list:
+1. "Hello everyone!" — **deleted**
+2. "Hello to all" — **not deleted**
+3. "Hello bye everyone" — **not deleted**
+4. "Ad spam 18+ bye" — **not deleted**
+5. "A very long text about the cultural value of the brat Charli xcx album" — **deleted**
+6. "A very long text about the cultural value of the brat Charli xcx album hello" — **not deleted**
+7. "A very long text about the cultural value of the brat Charli xcx album ad" — **deleted**
+
+### Mode B: `CHECK_ALLOWED = False`, `CHECK_FORBIDDEN = True`
 ```python
 GRAY_LIST = [11111111111, 2222222222]
 
@@ -58,19 +61,19 @@ ALLOWED_WORDS = ["hello", "bye", "how", "are", "you"]
 
 FORBIDDEN_WORDS = ["ad", "spam", "18+"]
 
-CHECK_ALLOWED = False      
-CHECK_FORBIDDEN = True #!
+CHECK_ALLOWED = False
+CHECK_FORBIDDEN = True  #!
 ```
-Примеры сообщений, которые будут фильтроваться от бота/пользователя из серого списка:
-1. "Всем привет!" - **не удаляется**
-2. "Всем hello" - **не удаляется**
-3. "Всем hello bye" - **не удаляется**
-4. "Ad spam 18+ bye" - **удаляется**
-5. "Очень длинный текст, повествующий о культурной ценности альбома brat Charli xcx" - **не удаляется**
-6. "Очень длинный текст, повествующий о культурной ценности альбома brat Charli xcx hello" - **не удаляется**
-7. "Очень длинный текст, повествующий о культурной ценности альбома brat Charli xcx ad" - **удаляется**
+Examples of messages that will be filtered:
+1. "Hello everyone!" — **not deleted**
+2. "Hello to all" — **not deleted**
+3. "Hello bye everyone" — **not deleted**
+4. "Ad spam 18+ bye" — **deleted**
+5. "A very long text about the cultural value of the brat Charli xcx album" — **not deleted**
+6. "A very long text about the cultural value of the brat Charli xcx album hello" — **not deleted**
+7. "A very long text about the cultural value of the brat Charli xcx album ad" — **deleted**
 
-### Режим В: CHECK_ALLOWED = True, CHECK_FORBIDDEN = True
+### Mode C: `CHECK_ALLOWED = True`, `CHECK_FORBIDDEN = True`
 ```python
 GRAY_LIST = [11111111111, 2222222222]
 
@@ -78,29 +81,33 @@ ALLOWED_WORDS = ["hello", "bye", "how", "are", "you"]
 
 FORBIDDEN_WORDS = ["ad", "spam", "18+"]
 
-CHECK_ALLOWED = True #!      
-CHECK_FORBIDDEN = True #!
+CHECK_ALLOWED = True  #!
+CHECK_FORBIDDEN = True  #!
 ```
-Примеры сообщений, которые будут фильтроваться от бота/пользователя из серого списка:
-1. "Всем привет!" - **удаляется**
-2. "Всем hello" - **не удаляется**
-3. "Всем hello bye" - **не удаляется**
-4. "Ad spam 18+ bye" - **удаляется**
-5. "Очень длинный текст, повествующий о культурной ценности альбома brat Charli xcx" - **удаляется**
-6. "Очень длинный текст, повествующий о культурной ценности альбома brat Charli xcx hello" - **не удаляется**
-7. "Очень длинный текст, повествующий о культурной ценности альбома brat Charli xcx ad" - **удаляется**
-   
-## Установка
+Examples of messages that will be filtered:
+1. "Hello everyone!" — **deleted**
+2. "Hello to all" — **not deleted**
+3. "Hello bye everyone" — **not deleted**
+4. "Ad spam 18+ bye" — **deleted**
+5. "A very long text about the cultural value of the brat Charli xcx album" — **deleted**
+6. "A very long text about the cultural value of the brat Charli xcx album hello" — **not deleted**
+7. "A very long text about the cultural value of the brat Charli xcx album ad" — **deleted**
 
-0. В директории бота пропишите 'pip install -r .\requirements.txt' (установите Python и Pip, если они у вас еще не установлены)
-   
-1. Создайте своего бота в Telegram боте @BotFather, получите для него токен.
-2. Создайте в директории с ботом .env файл, в который нужно отправить токен бота (образец - в .env-example, токен нужно закинуть именно в новосозданный .env, а не в .env-example!)
-3. Зайдите внутрь скрипта, и пропишите правила, по которым бот будет фильтровать сообщения (Раздел "Правила" в этом README)
-4. Добавьте своего созданного бота в свою Telegram-группу
-5. Дайте боту права админа
-- 5.1 Проверьте, чтобы /setprivacy у бота в @BotFather стоял DISABLE
-6. Запустите .py файл.
+## Installation
 
+0. In the bot directory, run:
+   ```bash
+   pip install -r .\requirements.txt
+   ```
+   (install Python and Pip if not already installed)
 
-
+1. Create your bot in @BotFather and get its token.
+2. In the bot directory, create a `.env` file (based on `.env-example`) and paste in the token.
+3. Open the script and define the filtering rules in the "Rules" section of this README.
+4. Add your new bot to your Telegram group.
+5. Grant the bot admin rights.
+   5.1. Make sure `/setprivacy` is set to `Disable` in @BotFather.
+6. Run the `.py` file:
+   ```bash
+   python bot.py
+   ```
